@@ -1,25 +1,62 @@
 @echo off
 setlocal
  
-rem --- Verificação inicial do Python: se não existir, tenta instalar via winget ---
+:rem --- Verificação inicial do Python: se não existir, tenta instalar via winget ou baixar instalador ---
 where py >nul 2>&1
 if %errorlevel% equ 0 goto :python_check_done
 where python >nul 2>&1
 if %errorlevel% equ 0 goto :python_check_done
 
-echo Python nao encontrado. Tentando instalar via winget...
+echo Python nao encontrado.
+
+rem Primeiro tenta instalar via winget (se disponível)
 where winget >nul 2>&1
-if %errorlevel% neq 0 (
-  echo winget nao encontrado. Por favor instale o winget manualmente e execute este instalador novamente.
-) else (
-  echo Instalando Python via winget (aceitando acordos)...
+if %errorlevel% equ 0 (
+  echo Tentando instalar Python via winget (aceitando acordos)...
   winget install --id Python.Python.3 -e --accept-source-agreements --accept-package-agreements
-  if %errorlevel% neq 0 (
-    echo Falha ao instalar Python via winget.
+  if %errorlevel% equ 0 (
+    echo Python instalado via winget.
+    goto :after_install_attempt
   ) else (
-    echo Python instalado. Pode ser necessario reabrir o terminal para atualizar o PATH.
+    echo winget falhou ao instalar Python. Tentando instalador direto...
   )
+) else (
+  echo winget nao encontrado. Tentando baixar instalador do Python via PowerShell...
 )
+
+rem Se winget nao instalou, tenta baixar instalador do python.org e executar silenciosamente
+set "PYVER=3.11.5"
+set "PYEXEC=python-%PYVER%-amd64.exe"
+set "PYURL=https://www.python.org/ftp/python/%PYVER%/%PYEXEC%"
+set "PYTMP=%TEMP%\%PYEXEC%"
+
+echo Baixando %PYURL% para %PYTMP% ...
+powershell -NoProfile -Command "try { Invoke-WebRequest -Uri '%PYURL%' -OutFile '%PYTMP%' } catch { exit 2 }"
+if %errorlevel% neq 0 (
+  echo Falha ao baixar o instalador do Python. Verifique sua conexao ou instale Python manualmente.
+  goto :python_check_done
+)
+
+echo Executando instalador do Python (silencioso)...
+start /wait "" "%PYTMP%" /quiet InstallAllUsers=1 PrependPath=1 Include_pip=1
+if %errorlevel% neq 0 (
+  echo Aviso: instalador retornou codigo %errorlevel%.
+)
+
+:after_install_attempt
+rem Aguarda alguns segundos para o instalador ajustar PATH (se aplicavel)
+timeout /t 3 /nobreak >nul 2>&1
+
+where py >nul 2>&1
+if %errorlevel% equ 0 goto :python_check_done
+where python >nul 2>&1
+if %errorlevel% equ 0 goto :python_check_done
+
+echo Nao foi possivel instalar o Python automaticamente.
+echo Por favor instale o Python manualmente e execute este instalador novamente.
+pause
+exit /b 1
+
 :python_check_done
 
 rem Run from this .bat location
