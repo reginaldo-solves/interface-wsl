@@ -30,6 +30,7 @@ Um script Python automatizado com uma interface gráfica moderna em Tkinter que 
 **Importante:** Este script requer privilégios de administrador.
 
 #### Método 1: Executar como Administrador
+
 1. Clique com o botão direito do mouse em Prompt de Comando ou PowerShell
 2. Selecione "Executar como administrador"
 3. Navegue até o diretório do script:
@@ -48,6 +49,7 @@ python wsl_installer.py
 ```
 
 #### Método 2: Execução Direta (solicitará privilégios de administrador)
+
 1. Clique duas vezes em `wsl_installer.py`
 2. Se solicitado, permita o acesso de administrador
 
@@ -58,6 +60,7 @@ python wsl_installer.py
 3. **Clique em "INSTALAR WSL E DEBIAN"**: Inicie o processo de instalação
 
 A interface irá:
+
 - Exibir e ocultar a imagem gradualmente durante o processo de instalação
 - Mostrar mensagens de progresso
 - Salvar suas credenciais em um arquivo `.env`
@@ -66,21 +69,25 @@ A interface irá:
 ## O que acontece durante a instalação
 
 ### Etapa 1: Verificação do WSL
+
 - Verifica se o WSL já está instalado
 - Caso não esteja instalado, baixa e instala o WSL
 - **Observação:** Se o WSL for uma instalação recente, você precisará reiniciar o computador
 
 ### Etapa 2: Instalação do Debian
+
 - Executa o comando do PowerShell para baixar a distribuição Debian
 - Instala o Debian como uma distribuição WSL
 
 ### Etapa 3: Configuração do usuário
+
 - Cria sua conta de usuário no Debian
 - Define sua senha
 - Adiciona seu usuário ao grupo sudo
 - Configura o Debian para usar sua conta por padrão
 
 ### Etapa 4: Salvar credenciais
+
 - Cria um arquivo `.env` no mesmo diretório do script
 - Armazena seu nome de usuário e senha para referência
 
@@ -108,24 +115,27 @@ Após a instalação, você pode acessar o Debian das seguintes maneiras:
 
 wsl
 
-```
+````
 
 Ou especificamente para Debian:
 ```bash
 wsl -d Debian
-```
+````
 
 ## Solução de problemas
 
 ### Erro "Administrador necessário"
+
 - Certifique-se de estar executando o script com privilégios de administrador
 - Clique com o botão direito do mouse no Prompt de Comando/PowerShell e selecione "Executar como administrador"
 
 ### Mensagem "Reinicialização necessária"
+
 - Esta mensagem aparece quando o WSL é instalado pela primeira vez
 - Reinicie o computador e execute o script novamente
 
 ### Falha na instalação
+
 - Verifique sua conexão com a internet
 - Certifique-se de que o Windows esteja atualizado
 - Verifique se você tem espaço suficiente em disco (pelo menos 1 GB livre)
@@ -139,6 +149,7 @@ wsl -d Debian
 ## Design
 
 A interface é inspirada em telas de login modernas com:
+
 - Elementos de design arredondados e com efeito vítreo
 - Fontes em negrito e legíveis (Segoe UI)
 - Efeitos de foco suaves

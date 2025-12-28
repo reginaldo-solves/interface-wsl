@@ -1,5 +1,26 @@
 @echo off
 setlocal
+ 
+rem --- Verificação inicial do Python: se não existir, tenta instalar via winget ---
+where py >nul 2>&1
+if %errorlevel% equ 0 goto :python_check_done
+where python >nul 2>&1
+if %errorlevel% equ 0 goto :python_check_done
+
+echo Python nao encontrado. Tentando instalar via winget...
+where winget >nul 2>&1
+if %errorlevel% neq 0 (
+  echo winget nao encontrado. Por favor instale o winget manualmente e execute este instalador novamente.
+) else (
+  echo Instalando Python via winget (aceitando acordos)...
+  winget install --id Python.Python.3 -e --accept-source-agreements --accept-package-agreements
+  if %errorlevel% neq 0 (
+    echo Falha ao instalar Python via winget.
+  ) else (
+    echo Python instalado. Pode ser necessario reabrir o terminal para atualizar o PATH.
+  )
+)
+:python_check_done
 
 rem Run from this .bat location
 set "SCRIPT_DIR=%~dp0"
