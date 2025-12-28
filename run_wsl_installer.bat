@@ -1,7 +1,17 @@
+:echo off
 @echo off
 setlocal
- 
-:rem --- Verificação inicial do Python: se não existir, tenta instalar via winget ou baixar instalador ---
+
+rem Elevate to Administrator if needed before attempting installations
+set "SCRIPT_DIR=%~dp0"
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+  echo Requesting Administrator privileges...
+  powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%COMSPEC%' -ArgumentList '/c','""%~f0""' -WorkingDirectory '%SCRIPT_DIR%' -Verb RunAs"
+  exit /b
+)
+
+rem --- Verificação inicial do Python: se não existir, tenta instalar via winget ou baixar instalador ---
 where py >nul 2>&1
 if %errorlevel% equ 0 goto :python_check_done
 where python >nul 2>&1
@@ -70,13 +80,7 @@ if not exist "%PY_SCRIPT%" (
   exit /b 1
 )
 
-rem Relaunch as Administrator if needed
-net session >nul 2>&1
-if %errorlevel% neq 0 (
-  echo Requesting Administrator privileges...
-  powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%COMSPEC%' -ArgumentList '/c','""%~f0""' -WorkingDirectory '""%SCRIPT_DIR%""' -Verb RunAs"
-  exit /b
-)
+rem (elevação já feita no início do script)
 
 pushd "%SCRIPT_DIR%"
 
